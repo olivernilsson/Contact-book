@@ -1,4 +1,21 @@
+body {
+  font-family: "Josefin sans";
+}
+
+.header {
+  height: 20vh;
+  background-color: #2ecc71;
+  font-size: 40px;
+}
+
+.title {
+  font-size: 4rem;
+  padding-top: calc(10vh - 32px);
+  padding-left: 60px;
+}
+
 .main {
-  height: 200px;
-  background-color: blue;
+  height: 80vh;
+  background-color: #d5fadd;
+  padding: 60px;
 }
