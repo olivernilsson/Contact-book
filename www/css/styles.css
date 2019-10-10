@@ -15,7 +15,28 @@ body {
 }
 
 .main {
-  height: 80vh;
+  min-height: calc(80vh - 120px);
   background-color: #d5fadd;
   padding: 60px;
+}
+
+.contact-list {
+  position: relative;
+  display: inline-block;
+  width: 20vw;
+  height: 100%;
+}
+
+.contact-form {
+  position: relative;
+  display: inline-block;
+}
+
+.form-row {
+  display: block;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
 }

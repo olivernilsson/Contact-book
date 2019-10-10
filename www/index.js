@@ -1,8 +1,9 @@
 class Index {
   constructor() {
     this.body = document.querySelector("body")
-    this.setUpSections()
     this.getContacts()
+    this.setUpSections()
+    this.renderContactForm()
   }
 
   setUpSections() {
@@ -11,14 +12,25 @@ class Index {
     let title = document.createElement("h1")
     title.innerHTML = "Kontaktbok"
     title.setAttribute("class", "title")
-    header.append(title)
 
     let main = document.createElement("main")
-    main.innerHTML = "Hej! Jag är en main."
     main.setAttribute("class", "main")
 
+    let contactList = document.createElement("div")
+    contactList.innerHTML = "contactList"
+    contactList.setAttribute("class", "contact-list")
+
+    let contactForm = document.createElement("form")
+    contactForm.setAttribute("class", "contact-form")
+
     this.body.append(header)
+    header.append(title)
+
     this.body.append(main)
+
+    main.append(contactList)
+
+    main.append(contactForm)
   }
 
   addListeners() {}
@@ -28,6 +40,33 @@ class Index {
     contacts = await contacts.json()
     console.log(contacts)
     return contacts
+  }
+
+  renderContactForm() {
+    let contactForm = document.querySelector(".contact-form")
+
+    let formContent = `
+    <div>
+      <div class="form-row">
+        <label for="first-name">Förnamn:</label>
+        <input type="text" id="first-name" name="first-name">
+      </div>
+      <div class="form-row">
+        <label for="last-name">Efternamn:</label>
+        <input type="text" id="last-name" name="last-name">
+      </div>
+      <div class="form-row">
+        <label for="phone-number">Telefonnummer:</label>
+        <input type="text" id="phone" name="phone">
+      </div>
+      <div class="form-row">
+        <label for="email">Epostadress:</label>
+        <input type="text" id="email" name="email">
+      </div>
+    </div>
+    `
+
+    contactForm.innerHTML = formContent
   }
 }
 
