@@ -15,28 +15,61 @@ body {
 }
 
 .main {
-  min-height: calc(80vh - 120px);
+  min-height: calc(80vh - 130px);
   background-color: #d5fadd;
-  padding: 60px;
+  padding: 65px;
 }
 
 .contact-list {
   position: relative;
   display: inline-block;
-  width: 20vw;
+  width: 350px;
   height: 100%;
+  margin-right: 200px;
+  vertical-align: top;
+}
+
+.input-field {
+  width: 350px;
+  height: 28px;
+  border-radius: 3px;
+  border: 2px solid #00ba75;
+  font-size: 28px;
+  font-family: "Josefin sans";
+  padding-top: 10px;
 }
 
 .contact-form {
   position: relative;
   display: inline-block;
+  width: 600px;
 }
 
 .form-row {
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 1.5rem;
 }
 
 label {
   display: block;
+}
+
+.list-item {
+  padding: 15px 0 15px 0;
+  border-top: 2px solid;
+}
+
+.list-item:last-of-type {
+  border-bottom: 2px solid;
+}
+
+.list-item:hover {
+  cursor: pointer;
+  background-color: #00ba75;
+}
+
+.list-label {
+  font-size: 2rem;
+  cursor: pointer;
 }
