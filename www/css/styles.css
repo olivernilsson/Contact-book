@@ -74,6 +74,17 @@ label {
   cursor: pointer;
 }
 
+.add-contact {
+  padding: 15px 0 15px 0;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+}
+
+.add-contact:hover {
+  cursor: pointer;
+  background-color: #00ba75;
+}
+
 button {
   font-family: "Josefin sans";
   height: 50px;
@@ -102,4 +113,9 @@ button {
 .form-button-container {
   text-align: center;
   margin: auto;
+}
+
+.contact-view {
+  display: inline-block;
+  font-size: 2rem;
 }

@@ -4,7 +4,7 @@ class Index {
     this.contacts = ""
     this.getContacts()
     this.setUpSections()
-    this.renderContactForm()
+    //this.renderContactForm()
     this.addListeners()
   }
 
@@ -21,32 +21,31 @@ class Index {
     let contactList = document.createElement("div")
     contactList.setAttribute("class", "contact-list")
 
-    let contactForm = document.createElement("form")
-    contactForm.setAttribute("class", "contact-form")
-
     this.body.append(header)
     header.append(title)
 
     this.body.append(main)
 
     main.append(contactList)
-
-    main.append(contactForm)
-  }
-
-  contactListItem(firstName, lastName, id) {
-    let listItem = `
-    <div class="list-item">
-      <label class="list-label" id="${id}">${firstName + " " + lastName}</label>
-    </div>
-    `
-    return listItem
   }
 
   addListeners() {
     listen("click", ".list-item", async e => {
-      let contact = await this.getContact(e.target.id)
-      console.log(contact)
+      await this.renderContact(e.target.id)
+      this.removeContactForm()
+    })
+
+    listen("click", ".button-accept", async e => {
+      this.createContact()
+    })
+
+    listen("click", ".add-contact", async e => {
+      this.renderContactForm()
+      this.removeContactView()
+    })
+
+    listen("click", ".button-cancel", async e => {
+      this.removeContactForm()
     })
   }
 
@@ -62,6 +61,30 @@ class Index {
     return await contact
   }
 
+  createContact = async () => {
+    let newContact = {}
+    let number = [document.querySelector(".phone-input").value]
+    let email = [document.querySelector(".email-input").value]
+    newContact.firstName = document.querySelector(".first-name-input").value
+    newContact.lastName = document.querySelector(".last-name-input").value
+    newContact.numbers = number
+    newContact.emails = email
+    newContact.history = {
+      firstName: newContact.firstName,
+      lastName: newContact.lastName,
+      numbers: newContact.numbers,
+      emails: newContact.emails
+    }
+
+    let rawFetchData = await fetch("/api/contacts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newContact)
+    })
+  }
+
   renderContactList(contacts) {
     let contactList = document.querySelector(".contact-list")
     console.table(contacts)
@@ -73,28 +96,87 @@ class Index {
         contact._id
       ))
     })
+    contactList.innerHTML += `
+    <div class="add-contact">
+      <label class="list-label">Lägg till kontakt+</label>
+    </div>
+    `
+  }
+
+  async renderContact(id) {
+    this.removeContactView()
+
+    let contact = await this.getContact(id)
+
+    let contactContent = `
+      <label class="first-name-label">Förnamn: ${contact.firstName}</label>
+      <label class="first-name-label">Efternamn: ${contact.lastName}</label>
+      <label class="first-name-label">Telefonnummer: ${contact.numbers.map(
+        number => {
+          return `<div>${number}</div>`
+        }
+      )}</label>
+      <label class="first-name-label">Epostadresser: ${contact.emails}</label>
+      `
+    let main = document.querySelector(".main")
+    //console.log(document.querySelector(".content-view"))
+
+    let contactView = document.createElement("div")
+    contactView.setAttribute("class", "contact-view")
+    main.append(contactView)
+
+    contactView.innerHTML = contactContent
+  }
+
+  removeContactForm() {
+    let contactForm = document.querySelector(".contact-form")
+    if (contactForm) {
+      contactForm.remove()
+    }
+  }
+
+  removeContactView() {
+    let contactView = document.querySelector(".contact-view")
+    if (contactView) {
+      contactView.remove()
+    }
+  }
+
+  contactListItem(firstName, lastName, id) {
+    let listItem = `
+    <div class="list-item">
+      <label class="list-label" id="${id}">${firstName + " " + lastName}</label>
+    </div>
+    `
+    return listItem
   }
 
   renderContactForm() {
-    let contactForm = document.querySelector(".contact-form")
+    let contactForm = document.createElement("div")
+    contactForm.setAttribute("class", "contact-form")
+
+    let main = document.querySelector(".main")
+    main.append(contactForm)
+
+    contactForm = document.querySelector(".contact-form")
 
     let formContent = `
     <div>
       <div class="form-row">
         <label for="first-name">Förnamn:</label>
-        <input type="text" id="first-name" name="first-name" class="input-field">
+        <input type="text" id="first-name" name="first-name" class="input-field first-name-input">
       </div>
       <div class="form-row">
         <label for="last-name">Efternamn:</label>
-        <input type="text" id="last-name" name="last-name" class="input-field">
+        <input type="text" id="last-name" name="last-name" class="input-field last-name-input">
       </div>
       <div class="form-row">
         <label for="phone-number">Telefonnummer:</label>
-        <input type="text" id="phone" name="phone" class="input-field">
+        <input type="text" id="phone" name="phone" class="input-field phone-input">
       </div>
       <div class="form-row">
         <label for="email">Epostadress:</label>
-        <input type="text" id="email" name="email" class="input-field">
+        <input type="text" id="email" name="email" class="input-field email-input">
       </div>
       <div class="form-button-container">
         <button class="button-cancel">Avbryt</button>
