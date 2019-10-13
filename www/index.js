@@ -5,6 +5,7 @@ class Index {
     this.getContacts()
     this.setUpSections()
     this.renderContactForm()
+    this.addListeners()
   }
 
   setUpSections() {
@@ -33,21 +34,32 @@ class Index {
     main.append(contactForm)
   }
 
-  contactListItem(firstName, lastName) {
+  contactListItem(firstName, lastName, id) {
     let listItem = `
     <div class="list-item">
-      <label class="list-label">${firstName + " " + lastName}</label>
+      <label class="list-label" id="${id}">${firstName + " " + lastName}</label>
     </div>
     `
     return listItem
   }
 
-  addListeners() {}
+  addListeners() {
+    listen("click", ".list-item", async e => {
+      let contact = await this.getContact(e.target.id)
+      console.log(contact)
+    })
+  }
 
   getContacts = async () => {
     let contacts = await fetch("/api/contacts")
     contacts = await contacts.json()
     await this.renderContactList(contacts)
+  }
+
+  getContact = async id => {
+    let contact = await fetch(`/api/contacts/id/${id}`)
+    contact = await contact.json()
+    return await contact
   }
 
   renderContactList(contacts) {
@@ -57,7 +69,8 @@ class Index {
     contacts.map(contact => {
       return (contactList.innerHTML += this.contactListItem(
         contact.firstName,
-        contact.lastName
+        contact.lastName,
+        contact._id
       ))
     })
   }
@@ -83,11 +96,48 @@ class Index {
         <label for="email">Epostadress:</label>
         <input type="text" id="email" name="email" class="input-field">
       </div>
+      <div class="form-button-container">
+        <button class="button-cancel">Avbryt</button>
+        <button class="button-accept">Godkänn</button>
+      </div>
     </div>
     `
 
     contactForm.innerHTML = formContent
   }
 }
+
+const [listen, unlisten] = (() => {
+  let listeningOnType = {}
+  let listeners = []
+
+  function listen(eventType, cssSelector, func) {
+    // Register a "listener"
+    let listener = { eventType, cssSelector, func }
+    listeners.push(listener)
+    // If no listener on window[eventType] register a
+    // a real/raw js-listener
+    if (!listeningOnType[eventType]) {
+      // add event listener for this type on the whole window
+      window.addEventListener(eventType, e => {
+        listeners
+          .filter(x => x.eventType === eventType)
+          .forEach(listener => {
+            if (e.target.closest(listener.cssSelector)) {
+              listener.func(e)
+            }
+          })
+      })
+      listeningOnType[eventType] = true
+    }
+    return listener
+  }
+
+  function unlisten(listener) {
+    listeners.splice(listeners.indexOf(listener), 1)
+  }
+
+  return [listen, unlisten]
+})()
 
 new Index()
