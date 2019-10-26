@@ -11,6 +11,16 @@ router.get("/api/contacts", async (req, res) => {
     })
 })
 
+router.get("/api/contact/latest", async (req, res) => {
+  Contact.find({})
+    .sort({ _id: -1 })
+    .limit(1)
+    .exec()
+    .then(data => {
+      res.status(200).send(data)
+    })
+})
+
 router.get("/api/contacts/id/:id", async (req, res) => {
   Contact.findById(req.params.id).then(data => {
     res.status(200).send(data)

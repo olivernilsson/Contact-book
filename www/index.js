@@ -4,8 +4,9 @@ class Index {
     this.contacts = ""
     this.getContacts()
     this.setUpSections()
-    //this.renderContactForm()
     this.addListeners()
+    this.currentId = ""
+    this.currentContact = ""
   }
 
   setUpSections() {
@@ -33,19 +34,38 @@ class Index {
     listen("click", ".list-item", async e => {
       await this.renderContact(e.target.id)
       this.removeContactForm()
+      this.removeUpdateForm()
+      this.currentId = e.target.id
     })
 
     listen("click", ".button-accept", async e => {
       this.createContact()
+      await this.getContacts()
+      this.removeContactForm()
+      await this.renderContact(await this.getLatestContactId())
     })
 
     listen("click", ".add-contact", async e => {
       this.renderContactForm()
       this.removeContactView()
+      this.removeUpdateForm()
     })
 
     listen("click", ".button-cancel", async e => {
       this.removeContactForm()
+      this.removeUpdateForm()
+    })
+
+    listen("click", ".button-edit", async e => {
+      this.removeContactForm()
+      this.removeContactView()
+      this.renderEditContact()
+    })
+
+    listen("click", ".button-edit-accept", async e => {
+      await this.updateContact(this.currentContact)
+      this.removeUpdateForm()
+      await this.renderContact(this.currentId)
     })
   }
 
@@ -59,6 +79,14 @@ class Index {
     let contact = await fetch(`/api/contacts/id/${id}`)
     contact = await contact.json()
     return await contact
+  }
+
+  getLatestContactId = async id => {
+    console.log("RUNNING")
+    let contact = await fetch(`/api/contact/latest`)
+    contact = await contact.json()
+    console.log(contact[0]._id)
+    return await contact[0]._id
   }
 
   createContact = async () => {
@@ -85,8 +113,33 @@ class Index {
     })
   }
 
+  updateContact = async contact => {
+    let updatedContact = { ...contact }
+    let number = [document.querySelector(".phone-input").value]
+    let email = [document.querySelector(".email-input").value]
+    updatedContact.firstName = document.querySelector(".first-name-input").value
+    updatedContact.lastName = document.querySelector(".last-name-input").value
+    updatedContact.numbers = number
+    updatedContact.emails = email
+    updatedContact.history = {
+      firstName: updatedContact.firstName,
+      lastName: updatedContact.lastName,
+      numbers: updatedContact.numbers,
+      emails: updatedContact.emails
+    }
+
+    let rawFetchData = await fetch("/api/contacts/edit", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(updatedContact)
+    })
+  }
+
   renderContactList(contacts) {
     let contactList = document.querySelector(".contact-list")
+    contactList.innerHTML = ""
     console.table(contacts)
 
     contacts.map(contact => {
@@ -108,15 +161,26 @@ class Index {
 
     let contact = await this.getContact(id)
 
+    this.currentId = id
+
     let contactContent = `
-      <label class="first-name-label">Förnamn: ${contact.firstName}</label>
-      <label class="first-name-label">Efternamn: ${contact.lastName}</label>
-      <label class="first-name-label">Telefonnummer: ${contact.numbers.map(
+      <label class="first-name-label contact-label">Förnamn: ${
+        contact.firstName
+      }</label>
+      <label class="first-name-label contact-label">Efternamn: ${
+        contact.lastName
+      }</label>
+      <label class="first-name-label contact-label">Telefonnummer: ${contact.numbers.map(
         number => {
           return `<div>${number}</div>`
         }
       )}</label>
-      <label class="first-name-label">Epostadresser: ${contact.emails}</label>
+      <label class="first-name-label contact-label">Epostadresser: ${
+        contact.emails
+      }</label>
+      <button class="button-edit">Redigera</button>
+      <i class="fas fa-undo-alt undo"></i>
+      <i class="fas fa-redo-alt redo"></i>
       `
     let main = document.querySelector(".main")
     //console.log(document.querySelector(".content-view"))
@@ -126,6 +190,47 @@ class Index {
     main.append(contactView)
 
     contactView.innerHTML = contactContent
+  }
+
+  async renderEditContact() {
+    let contact = await this.getContact(this.currentId)
+
+    this.currentContact = contact
+
+    let updateForm = document.createElement("div")
+    updateForm.setAttribute("class", "update-form")
+
+    let main = document.querySelector(".main")
+    main.append(updateForm)
+
+    updateForm = document.querySelector(".update-form")
+
+    let formContent = `
+    <div>
+      <div class="form-row">
+        <label for="first-name">Förnamn:</label>
+        <input type="text" id="first-name" name="first-name" class="input-field first-name-input" value=${contact.firstName}>
+      </div>
+      <div class="form-row">
+        <label for="last-name">Efternamn:</label>
+        <input type="text" id="last-name" name="last-name" class="input-field last-name-input" value=${contact.lastName}>
+      </div>
+      <div class="form-row">
+        <label for="phone-number">Telefonnummer:</label>
+        <input type="text" id="phone" name="phone" class="input-field phone-input" value=${contact.numbers}>
+      </div>
+      <div class="form-row">
+        <label for="email">Epostadress:</label>
+        <input type="text" id="email" name="email" class="input-field email-input" value=${contact.emails}>
+      </div>
+      <div class="form-button-container">
+        <button class="button-cancel">Avbryt</button>
+        <button class="button-edit-accept">Godkänn</button>
+      </div>
+    </div>
+    `
+
+    updateForm.innerHTML = formContent
   }
 
   removeContactForm() {
@@ -139,6 +244,13 @@ class Index {
     let contactView = document.querySelector(".contact-view")
     if (contactView) {
       contactView.remove()
+    }
+  }
+
+  removeUpdateForm() {
+    let updateForm = document.querySelector(".update-form")
+    if (updateForm) {
+      updateForm.remove()
     }
   }
 
