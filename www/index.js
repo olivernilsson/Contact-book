@@ -82,7 +82,6 @@ class Index {
   }
 
   getLatestContactId = async id => {
-    console.log("RUNNING")
     let contact = await fetch(`/api/contact/latest`)
     contact = await contact.json()
     console.log(contact[0]._id)
@@ -115,18 +114,20 @@ class Index {
 
   updateContact = async contact => {
     let updatedContact = { ...contact }
-    let number = [document.querySelector(".phone-input").value]
-    let email = [document.querySelector(".email-input").value]
+    let numbers = [...document.querySelectorAll(".phone-input")].map(
+      number => number.value
+    )
+    let emails = [...document.querySelectorAll(".email-input")].map(
+      number => number.value
+    )
     updatedContact.firstName = document.querySelector(".first-name-input").value
     updatedContact.lastName = document.querySelector(".last-name-input").value
-    updatedContact.numbers = number
-    updatedContact.emails = email
-    updatedContact.history = {
-      firstName: updatedContact.firstName,
-      lastName: updatedContact.lastName,
-      numbers: updatedContact.numbers,
-      emails: updatedContact.emails
-    }
+    updatedContact.numbers = numbers
+    updatedContact.emails = emails
+
+    let historyObj = { ...updatedContact }
+    delete historyObj.history
+    updatedContact.history.push({ ...historyObj })
 
     let rawFetchData = await fetch("/api/contacts/edit", {
       method: "PUT",
