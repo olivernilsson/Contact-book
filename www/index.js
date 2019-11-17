@@ -67,6 +67,26 @@ class Index {
       this.removeUpdateForm()
       await this.renderContact(this.currentId)
     })
+
+    listen("click", ".button-add-phone", async e => {
+      this.addPhoneField()
+    })
+
+    listen("click", ".button-add-email", async e => {
+      this.addEmailField()
+    })
+  }
+
+  addPhoneField = () => {
+    let phoneField = document.createElement("input")
+    phoneField.setAttribute("class", "input-field phone-input")
+    document.querySelector(".phone-row").append(phoneField)
+  }
+
+  addEmailField = () => {
+    let emailField = document.createElement("input")
+    emailField.setAttribute("class", "input-field phone-input")
+    document.querySelector(".email-row").append(emailField)
   }
 
   getContacts = async () => {
@@ -118,7 +138,7 @@ class Index {
       number => number.value
     )
     let emails = [...document.querySelectorAll(".email-input")].map(
-      number => number.value
+      email => email.value
     )
     updatedContact.firstName = document.querySelector(".first-name-input").value
     updatedContact.lastName = document.querySelector(".last-name-input").value
@@ -216,13 +236,15 @@ class Index {
         <label for="last-name">Efternamn:</label>
         <input type="text" id="last-name" name="last-name" class="input-field last-name-input" value=${contact.lastName}>
       </div>
-      <div class="form-row">
+      <div class="form-row phone-row">
         <label for="phone-number">Telefonnummer:</label>
         <input type="text" id="phone" name="phone" class="input-field phone-input" value=${contact.numbers}>
+        <button class="button-add-phone">+</button>
       </div>
-      <div class="form-row">
+      <div class="form-row email-row">
         <label for="email">Epostadress:</label>
         <input type="text" id="email" name="email" class="input-field email-input" value=${contact.emails}>
+        <button class="button-add-email">+</button>
       </div>
       <div class="form-button-container">
         <button class="button-cancel">Avbryt</button>
@@ -283,13 +305,15 @@ class Index {
         <label for="last-name">Efternamn:</label>
         <input type="text" id="last-name" name="last-name" class="input-field last-name-input">
       </div>
-      <div class="form-row">
+      <div class="form-row phone-row">
         <label for="phone-number">Telefonnummer:</label>
         <input type="text" id="phone" name="phone" class="input-field phone-input">
+        <button class="button-add-phone">+</button>
       </div>
-      <div class="form-row">
+      <div class="form-row email-row">
         <label for="email">Epostadress:</label>
         <input type="text" id="email" name="email" class="input-field email-input">
+        <button class="button-add-email">+</button>
       </div>
       <div class="form-button-container">
         <button class="button-cancel">Avbryt</button>

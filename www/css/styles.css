@@ -37,6 +37,7 @@ body {
   font-size: 28px;
   font-family: "Josefin sans";
   padding-top: 10px;
+  margin-bottom: 10px;
 }
 
 .contact-form,
@@ -47,8 +48,9 @@ body {
 }
 
 .form-row {
+  position: relative;
   display: block;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   font-size: 1.5rem;
 }
 
@@ -148,4 +150,22 @@ button {
 
 .redo:hover {
   transform: rotate(360deg);
+}
+
+.button-add-phone,
+.button-add-email {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  position: absolute;
+  bottom: 20px;
+  right: -45px;
+}
+
+.button-add-phone:focus,
+.button-add-email:focus {
+  outline: none;
 }
