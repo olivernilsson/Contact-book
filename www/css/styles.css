@@ -130,10 +130,36 @@ button {
 .contact-view {
   display: inline-block;
   font-size: 2rem;
+  width: 800px;
 }
 
 .contact-label {
   padding: 19px 0;
+}
+
+.phone-label,
+.email-label {
+  display: block;
+}
+
+.phone-div {
+  display: block;
+  margin-left: 237px;
+}
+
+.phone-div:first-of-type {
+  display: inline-block;
+  margin-left: 0;
+}
+
+.email-div {
+  display: block;
+  margin-left: 219px;
+}
+
+.email-div:first-of-type {
+  display: inline-block;
+  margin-left: 0;
 }
 
 .fas {

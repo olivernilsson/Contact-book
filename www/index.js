@@ -43,6 +43,7 @@ class Index {
       await this.getContacts()
       this.removeContactForm()
       await this.renderContact(await this.getLatestContactId())
+      await renderContactList(contacts)
     })
 
     listen("click", ".add-contact", async e => {
@@ -85,7 +86,7 @@ class Index {
 
   addEmailField = () => {
     let emailField = document.createElement("input")
-    emailField.setAttribute("class", "input-field phone-input")
+    emailField.setAttribute("class", "input-field email-input")
     document.querySelector(".email-row").append(emailField)
   }
 
@@ -110,12 +111,16 @@ class Index {
 
   createContact = async () => {
     let newContact = {}
-    let number = [document.querySelector(".phone-input").value]
-    let email = [document.querySelector(".email-input").value]
+    let numbers = [...document.querySelectorAll(".phone-input")].map(
+      number => number.value
+    )
+    let emails = [...document.querySelectorAll(".email-input")].map(
+      email => email.value
+    )
     newContact.firstName = document.querySelector(".first-name-input").value
     newContact.lastName = document.querySelector(".last-name-input").value
-    newContact.numbers = number
-    newContact.emails = email
+    newContact.numbers = numbers
+    newContact.emails = emails
     newContact.history = {
       firstName: newContact.firstName,
       lastName: newContact.lastName,
@@ -191,14 +196,16 @@ class Index {
       <label class="first-name-label contact-label">Efternamn: ${
         contact.lastName
       }</label>
-      <label class="first-name-label contact-label">Telefonnummer: ${contact.numbers.map(
-        number => {
-          return `<div>${number}</div>`
-        }
-      )}</label>
-      <label class="first-name-label contact-label">Epostadresser: ${
-        contact.emails
-      }</label>
+      <label class="phone-label contact-label">Telefonnummer: ${contact.numbers
+        .map(number => {
+          return `<div class="phone-div">${number}</div>`
+        })
+        .join("")}</label>
+        <label class="email-label contact-label">Epostadresser: ${contact.emails
+          .map(email => {
+            return `<div class="email-div">${email}</div>`
+          })
+          .join("")}</label>
       <button class="button-edit">Redigera</button>
       <i class="fas fa-undo-alt undo"></i>
       <i class="fas fa-redo-alt redo"></i>
@@ -230,20 +237,32 @@ class Index {
     <div>
       <div class="form-row">
         <label for="first-name">Förnamn:</label>
-        <input type="text" id="first-name" name="first-name" class="input-field first-name-input" value=${contact.firstName}>
+        <input type="text" id="first-name" name="first-name" class="input-field first-name-input" value=${
+          contact.firstName
+        }>
       </div>
       <div class="form-row">
         <label for="last-name">Efternamn:</label>
-        <input type="text" id="last-name" name="last-name" class="input-field last-name-input" value=${contact.lastName}>
+        <input type="text" id="last-name" name="last-name" class="input-field last-name-input" value=${
+          contact.lastName
+        }>
       </div>
       <div class="form-row phone-row">
         <label for="phone-number">Telefonnummer:</label>
-        <input type="text" id="phone" name="phone" class="input-field phone-input" value=${contact.numbers}>
+      ${contact.numbers
+        .map(number => {
+          return `<input type="text" id="phone" name="phone" class="input-field phone-input" value=${number}>`
+        })
+        .join("")}
         <button class="button-add-phone">+</button>
       </div>
       <div class="form-row email-row">
         <label for="email">Epostadress:</label>
-        <input type="text" id="email" name="email" class="input-field email-input" value=${contact.emails}>
+        ${contact.emails
+          .map(email => {
+            return `<input type="text" id="email" name="email" class="input-field email-input" value=${email}>`
+          })
+          .join("")}
         <button class="button-add-email">+</button>
       </div>
       <div class="form-button-container">
