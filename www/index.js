@@ -207,11 +207,20 @@ class Index {
     let emails = [...document.querySelectorAll(".email-input")].map(
       email => email.value
     )
+
     updatedContact.firstName = document.querySelector(".first-name-input").value
     updatedContact.lastName = document.querySelector(".last-name-input").value
-    updatedContact.numbers = numbers
-    updatedContact.emails = emails
+    updatedContact.numbers = numbers.filter(Boolean)
+    updatedContact.emails = emails.filter(Boolean)
     updatedContact.version = contact.history.length
+
+    if (updatedContact.numbers.length === 0) {
+      updatedContact.numbers.push("")
+    }
+
+    if (updatedContact.emails.length === 0) {
+      updatedContact.emails.push("")
+    }
 
     let historyObj = { ...updatedContact }
     delete historyObj.history
