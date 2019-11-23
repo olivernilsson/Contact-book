@@ -195,3 +195,7 @@ button {
 .button-add-email:focus {
   outline: none;
 }
+
+.version {
+  display: inline-block;
+}

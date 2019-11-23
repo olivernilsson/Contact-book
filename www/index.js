@@ -271,6 +271,9 @@ class Index {
       <button class="button-edit">Redigera</button>
       <i class="fas fa-undo-alt undo"></i>
       <i class="fas fa-redo-alt redo"></i>
+      <label class="version">Version: ${contact.version + 1}/${
+      contact.history.length
+    }</label>
       `
     let main = document.querySelector(".main")
     //console.log(document.querySelector(".content-view"))
