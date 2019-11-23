@@ -76,6 +76,62 @@ class Index {
     listen("click", ".button-add-email", async e => {
       this.addEmailField()
     })
+    listen("click", ".undo", async e => {
+      await this.historyBack()
+      await this.renderContact(this.currentId)
+    })
+    listen("click", ".redo", async e => {
+      await this.historyForward()
+      await this.renderContact(this.currentId)
+    })
+  }
+
+  historyBack = async () => {
+    console.log(this.currentContact)
+    let contact = this.currentContact
+    if (contact.version >= 0) {
+      if (contact.version > 0) {
+        contact.version--
+      }
+      console.log(contact)
+      contact.firstName = contact.history[contact.version].firstName
+      contact.lastName = contact.history[contact.version].lastName
+      contact.numbers = contact.history[contact.version].numbers
+      contact.emails = contact.history[contact.version].emails
+    }
+
+    await fetch("/api/contacts/edit", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(contact)
+    })
+    this.currentContact = contact
+  }
+
+  historyForward = async () => {
+    console.log(this.currentContact)
+    let contact = this.currentContact
+    if (contact.version <= contact.history.length - 1) {
+      if (contact.version < contact.history.length - 1) {
+        contact.version++
+      }
+      console.log(contact)
+      contact.firstName = contact.history[contact.version].firstName
+      contact.lastName = contact.history[contact.version].lastName
+      contact.numbers = contact.history[contact.version].numbers
+      contact.emails = contact.history[contact.version].emails
+    }
+
+    await fetch("/api/contacts/edit", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(contact)
+    })
+    this.currentContact = contact
   }
 
   addPhoneField = () => {
@@ -121,6 +177,7 @@ class Index {
     newContact.lastName = document.querySelector(".last-name-input").value
     newContact.numbers = numbers
     newContact.emails = emails
+    newContact.version = 0
     newContact.history = {
       firstName: newContact.firstName,
       lastName: newContact.lastName,
@@ -149,9 +206,12 @@ class Index {
     updatedContact.lastName = document.querySelector(".last-name-input").value
     updatedContact.numbers = numbers
     updatedContact.emails = emails
+    updatedContact.version = contact.history.length
+    console.log(contact.history.length)
 
     let historyObj = { ...updatedContact }
     delete historyObj.history
+    delete historyObj.version
     updatedContact.history.push({ ...historyObj })
 
     let rawFetchData = await fetch("/api/contacts/edit", {
@@ -186,6 +246,8 @@ class Index {
     this.removeContactView()
 
     let contact = await this.getContact(id)
+
+    this.currentContact = contact
 
     this.currentId = id
 

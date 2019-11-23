@@ -144,7 +144,7 @@ button {
 
 .phone-div {
   display: block;
-  margin-left: 237px;
+  margin: 0 0 5px 237px;
 }
 
 .phone-div:first-of-type {
@@ -154,7 +154,7 @@ button {
 
 .email-div {
   display: block;
-  margin-left: 219px;
+  margin: 0 0 5px 219px;
 }
 
 .email-div:first-of-type {

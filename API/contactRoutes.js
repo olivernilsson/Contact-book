@@ -39,6 +39,7 @@ router.put("/api/contacts/edit/", async (req, res) => {
   contact.lastName = req.body.lastName
   contact.numbers = req.body.numbers
   contact.emails = req.body.emails
+  contact.version = req.body.version
   contact.history = req.body.history
 
   await contact.save()

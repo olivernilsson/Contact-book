@@ -6,6 +6,7 @@ let contactSchema = new Schema({
   lastName: { type: String, required: true },
   numbers: { type: Array },
   emails: { type: Array },
+  version: { type: Number },
   history: { type: Array }
 })
 
