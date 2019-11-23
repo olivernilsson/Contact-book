@@ -80,11 +80,9 @@ class Index {
     })
     listen("click", ".undo", async e => {
       await this.historyBack()
-      await this.renderContact(this.currentId)
     })
     listen("click", ".redo", async e => {
       await this.historyForward()
-      await this.renderContact(this.currentId)
     })
 
     listen("click", ".delete", async e => {
@@ -102,51 +100,46 @@ class Index {
   }
 
   historyBack = async () => {
-    console.log(this.currentContact)
     let contact = this.currentContact
-    if (contact.version >= 0) {
-      if (contact.version > 0) {
-        contact.version--
-      }
-      console.log(contact)
-      contact.firstName = contact.history[contact.version].firstName
-      contact.lastName = contact.history[contact.version].lastName
-      contact.numbers = contact.history[contact.version].numbers
-      contact.emails = contact.history[contact.version].emails
-    }
+    if (contact.version >= 1) {
+      contact.firstName = contact.history[contact.version - 1].firstName
+      contact.lastName = contact.history[contact.version - 1].lastName
+      contact.numbers = contact.history[contact.version - 1].numbers
+      contact.emails = contact.history[contact.version - 1].emails
+      contact.version--
 
-    await fetch("/api/contacts/edit", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(contact)
-    })
-    this.currentContact = contact
+      await fetch("/api/contacts/edit", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contact)
+      })
+      this.currentContact = contact
+      await this.renderContact(this.currentId)
+    }
   }
 
   historyForward = async () => {
-    console.log(this.currentContact)
     let contact = this.currentContact
-    if (contact.version <= contact.history.length - 1) {
-      if (contact.version < contact.history.length - 1) {
-        contact.version++
-      }
+    if (contact.version <= contact.history.length - 2) {
       console.log(contact)
-      contact.firstName = contact.history[contact.version].firstName
-      contact.lastName = contact.history[contact.version].lastName
-      contact.numbers = contact.history[contact.version].numbers
-      contact.emails = contact.history[contact.version].emails
-    }
+      contact.firstName = contact.history[contact.version + 1].firstName
+      contact.lastName = contact.history[contact.version + 1].lastName
+      contact.numbers = contact.history[contact.version + 1].numbers
+      contact.emails = contact.history[contact.version + 1].emails
+      contact.version++
 
-    await fetch("/api/contacts/edit", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(contact)
-    })
-    this.currentContact = contact
+      await fetch("/api/contacts/edit", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contact)
+      })
+      this.currentContact = contact
+      await this.renderContact(this.currentId)
+    }
   }
 
   addPhoneField = () => {
