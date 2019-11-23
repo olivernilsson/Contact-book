@@ -43,7 +43,6 @@ class Index {
       await this.getContacts()
       this.removeContactForm()
       await this.renderContact(await this.getLatestContactId())
-      console.log("cont", this.contacts)
       await this.renderContactList(this.contacts)
     })
 
@@ -123,7 +122,6 @@ class Index {
   historyForward = async () => {
     let contact = this.currentContact
     if (contact.version <= contact.history.length - 2) {
-      console.log(contact)
       contact.firstName = contact.history[contact.version + 1].firstName
       contact.lastName = contact.history[contact.version + 1].lastName
       contact.numbers = contact.history[contact.version + 1].numbers
@@ -169,7 +167,6 @@ class Index {
   getLatestContactId = async id => {
     let contact = await fetch(`/api/contact/latest`)
     contact = await contact.json()
-    console.log(contact[0]._id)
     return await contact[0]._id
   }
 
@@ -215,7 +212,6 @@ class Index {
     updatedContact.numbers = numbers
     updatedContact.emails = emails
     updatedContact.version = contact.history.length
-    console.log(contact.history.length)
 
     let historyObj = { ...updatedContact }
     delete historyObj.history
@@ -234,7 +230,6 @@ class Index {
   renderContactList(contacts) {
     let contactList = document.querySelector(".contact-list")
     contactList.innerHTML = ""
-    console.table(contacts)
 
     contacts.map(contact => {
       return (contactList.innerHTML += this.contactListItem(
@@ -286,7 +281,6 @@ class Index {
 
       `
     let main = document.querySelector(".main")
-    //console.log(document.querySelector(".content-view"))
 
     let contactView = document.createElement("div")
     contactView.setAttribute("class", "contact-view")
