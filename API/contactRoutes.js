@@ -46,7 +46,7 @@ router.put("/api/contacts/edit/", async (req, res) => {
   res.status(200).send(contact)
 })
 
-router.delete("/api/contacts/id/:id/delete", async (req, res) => {
+router.delete("/api/contacts/delete/:id/", async (req, res) => {
   const contact = await Contact.findById(req.params.id)
   contact.delete(function(err) {
     if (err) {

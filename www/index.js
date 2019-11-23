@@ -39,11 +39,12 @@ class Index {
     })
 
     listen("click", ".button-accept", async e => {
-      this.createContact()
+      await this.createContact()
       await this.getContacts()
       this.removeContactForm()
       await this.renderContact(await this.getLatestContactId())
-      await renderContactList(contacts)
+      console.log("cont", this.contacts)
+      await this.renderContactList(this.contacts)
     })
 
     listen("click", ".add-contact", async e => {
@@ -55,6 +56,7 @@ class Index {
     listen("click", ".button-cancel", async e => {
       this.removeContactForm()
       this.removeUpdateForm()
+      this.renderContact(this.currentId)
     })
 
     listen("click", ".button-edit", async e => {
@@ -83,6 +85,19 @@ class Index {
     listen("click", ".redo", async e => {
       await this.historyForward()
       await this.renderContact(this.currentId)
+    })
+
+    listen("click", ".delete", async e => {
+      await this.deleteContact()
+      await this.removeContactView()
+      await this.getContacts()
+      await this.renderContactList(this.contacts)
+    })
+  }
+
+  deleteContact = async () => {
+    await fetch(`/api/contacts/delete/${this.currentContact._id}`, {
+      method: "DELETE"
     })
   }
 
@@ -148,8 +163,8 @@ class Index {
 
   getContacts = async () => {
     let contacts = await fetch("/api/contacts")
-    contacts = await contacts.json()
-    await this.renderContactList(contacts)
+    this.contacts = await contacts.json()
+    await this.renderContactList(this.contacts)
   }
 
   getContact = async id => {
@@ -274,6 +289,8 @@ class Index {
       <label class="version">Version: ${contact.version + 1}/${
       contact.history.length
     }</label>
+      <i class="fas fa-user-times delete"></i>
+
       `
     let main = document.querySelector(".main")
     //console.log(document.querySelector(".content-view"))
@@ -363,7 +380,7 @@ class Index {
 
   contactListItem(firstName, lastName, id) {
     let listItem = `
-    <div class="list-item">
+    <div class="list-item" id="${id}">
       <label class="list-label" id="${id}">${firstName + " " + lastName}</label>
     </div>
     `
